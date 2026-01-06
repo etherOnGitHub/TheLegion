@@ -1,4 +1,4 @@
 # TheLegion
 A series of microservices aimed to improve backend understanding.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f3427576-767a-4403-94f6-0c6b49d3a7fa" />
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/e3f2c17d-d188-4c2f-8e0a-2c10f143d917" />
