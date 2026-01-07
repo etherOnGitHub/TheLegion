@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package legion.health.v1;
+
+option csharp_namespace = "Legion.Health.V1";
+
+import "legion/common/v1/common.proto";
+
+service Heartbeat {
+  rpc Beat(BeatRequest) returns (BeatResponse);
+  rpc Check(CheckRequest) returns (CheckResponse);
+}
+
+message BeatRequest {
+  legion.common.v1.ServiceId id = 1;
+
+  legion.common.v1.ServiceStatus status = 2;
+  string note = 3;
+  double load = 4;
+}
+
+message BeatResponse {
+  legion.common.v1.Result result = 1;
+
+  // false means: "I don't know you" -> service should re-register
+  bool accepted = 2;
+
+  // server-recommended heartbeat interval
+  int64 next_interval_ms = 3;
+}
+
+message CheckRequest {
+  legion.common.v1.ServiceId id = 1;
+}
+
+message CheckResponse {
+  legion.common.v1.Result result = 1;
+
+  legion.common.v1.ServiceStatus status = 2;
+  int64 last_seen_at_ms = 3;
+  string note = 4;
+}

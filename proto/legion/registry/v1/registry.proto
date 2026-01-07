@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package legion.registry.v1;
+
+option csharp_namespace = "Legion.Registry.V1";
+
+import "legion/common/v1/common.proto";
+
+service ServiceRegistry {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Deregister(DeregisterRequest) returns (DeregisterResponse);
+  rpc List(ListRequest) returns (ListResponse);
+  rpc Resolve(ResolveRequest) returns (ResolveResponse);
+}
+
+message RegisterRequest {
+  legion.common.v1.ServiceKey key = 1;
+  legion.common.v1.Endpoint endpoint = 2;
+  legion.common.v1.ServiceMetadata metadata = 3;
+
+  // Optional: let caller suggest an id (otherwise registry generates)
+  string requested_id = 4;
+}
+
+message RegisterResponse {
+  legion.common.v1.Result result = 1;
+  legion.common.v1.ServiceInstance instance = 2; // set when ok
+}
+
+message DeregisterRequest {
+  legion.common.v1.ServiceId id = 1;
+}
+
+message DeregisterResponse {
+  legion.common.v1.Result result = 1;
+  bool removed = 2;
+}
+
+message ListRequest {
+  // Optional filters
+  string name = 1;
+  string version = 2;
+  repeated string tags = 3;
+
+  bool include_dead = 4;
+
+  legion.common.v1.PageRequest page = 10;
+}
+
+message ListResponse {
+  legion.common.v1.Result result = 1;
+  repeated legion.common.v1.ServiceInstance instances = 2;
+  legion.common.v1.PageResponse page = 10;
+}
+
+message ResolveRequest {
+  legion.common.v1.ServiceKey key = 1;
+}
+
+message ResolveResponse {
+  legion.common.v1.Result result = 1;
+  legion.common.v1.ServiceInstance instance = 2; // set when ok
+}

@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package legion.metrics.v1;
+
+option csharp_namespace = "Legion.Metrics.V1";
+
+import "legion/common/v1/common.proto";
+
+service Metrics {
+  rpc IncCounter(IncCounterRequest) returns (IncCounterResponse);
+  rpc SetGauge(SetGaugeRequest) returns (SetGaugeResponse);
+  rpc ObserveDuration(ObserveDurationRequest) returns (ObserveDurationResponse);
+
+  rpc ListMetrics(ListMetricsRequest) returns (ListMetricsResponse);
+}
+
+message MetricLabels {
+  map<string, string> labels = 1;
+}
+
+message IncCounterRequest {
+  string name = 1;       // "jobs_enqueued_total"
+  int64 delta = 2;       // usually 1
+  MetricLabels labels = 3;
+}
+
+message IncCounterResponse {
+  legion.common.v1.Result result = 1;
+}
+
+message SetGaugeRequest {
+  string name = 1;       // "queue_depth"
+  double value = 2;
+  MetricLabels labels = 3;
+}
+
+message SetGaugeResponse {
+  legion.common.v1.Result result = 1;
+}
+
+message ObserveDurationRequest {
+  string name = 1;       // "job_execution_ms"
+  int64 duration_ms = 2;
+  MetricLabels labels = 3;
+}
+
+message ObserveDurationResponse {
+  legion.common.v1.Result result = 1;
+}
+
+enum MetricKind {
+  METRIC_KIND_UNSPECIFIED = 0;
+  METRIC_KIND_COUNTER = 1;
+  METRIC_KIND_GAUGE = 2;
+  METRIC_KIND_DURATION = 3;
+}
+
+message MetricPoint {
+  string name = 1;
+  MetricKind kind = 2;
+  MetricLabels labels = 3;
+
+  int64 counter_value = 10;
+  double gauge_value = 11;
+  int64 last_duration_ms = 12;
+
+  int64 observed_at_ms = 20;
+}
+
+message ListMetricsRequest {
+  string name_prefix = 1;
+  legion.common.v1.PageRequest page = 10;
+}
+
+message ListMetricsResponse {
+  legion.common.v1.Result result = 1;
+  repeated MetricPoint points = 2;
+  legion.common.v1.PageResponse page = 10;
+}
